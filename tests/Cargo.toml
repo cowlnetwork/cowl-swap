@@ -1,0 +1,19 @@
+[package]
+name = "swap-tests"
+version = "1.0.0"
+edition = "2021"
+
+[dev-dependencies]
+cowl-swap = { path = "../contract", default-features = false }
+vesting-tests = { version = "*", git = "https://github.com/cowlnetwork/cowl-vesting.git", features = [
+  "test-support",
+] }
+casper-engine-test-support = { version = "7.0.3" }
+casper-execution-engine = "7.0.3"
+casper-types = "4.0.1"
+casper-event-standard = { version = "0.5.0", default-features = false }
+
+[lib]
+name = "swap_tests"
+bench = false
+doctest = false

@@ -1,0 +1,52 @@
+name: publish-cowl-swap
+
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow
+  push: # Triggers on pushes to specific branches or tags
+    tags:
+      - 'v*'
+      - 'release-*'
+
+jobs:
+  publish-contract-tarball:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          components: rustfmt, clippy
+          target: wasm32-unknown-unknown
+
+      - name: Setup
+        run: make prepare
+
+      - name: Install dependencies
+        run: sudo apt update && sudo apt install -y build-essential wabt
+
+      - name: Lint wasm contracts
+        run: make check-lint
+
+      - name: Test wasm contracts
+        run: make test
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: cowl_swap.wasm
+          path: ./target/wasm32-unknown-unknown/release/cowl_swap.wasm
+
+      - name: Set execute permission for package_wasm.sh
+        run: chmod +x ./.github/ci/package_wasm.sh
+
+      - name: Create tarball
+        run: ./.github/ci/package_wasm.sh
+
+      - name: Upload tarball to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: /tmp/ci_package_wasm_${{ github.ref_name }}/cowl-swap-wasm.tar.gz
