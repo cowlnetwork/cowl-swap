@@ -55,10 +55,6 @@ bench = false
 doctest = false
 test = false
 
-[profile.release]
-codegen-units = 1
-lto = true
-
 [features]
 default = ["contract-support"]
 contract-support = ["dep:casper-contract"]

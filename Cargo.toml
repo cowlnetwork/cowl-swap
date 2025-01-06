@@ -1,0 +1,14 @@
+[workspace]
+members = ["contract", "tests"]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+homepage = "cowl.network"
+license-file = "./LICENSE"
+readme = "./README.md"
+repository = "https://github.com/cowlnetwork/cowl-swap"
+
+[profile.release]
+codegen-units = 1
+lto = true
