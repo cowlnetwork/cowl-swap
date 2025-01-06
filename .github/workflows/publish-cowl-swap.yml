@@ -38,6 +38,11 @@ jobs:
         with:
           name: cowl_swap.wasm
           path: ./target/wasm32-unknown-unknown/release/cowl_swap.wasm
+            ./target/wasm32-unknown-unknown/release/deposit_cspr_session.wasm
+            ./target/wasm32-unknown-unknown/release/deposit_cowl_session.wasm
+            ./target/wasm32-unknown-unknown/release/cspr_to_cowl_session.wasm
+            ./target/wasm32-unknown-unknown/release/cowl_to_cspr_session.wasm
+            ./target/wasm32-unknown-unknown/release/balance_cowl_session.wasm
 
       - name: Set execute permission for package_wasm.sh
         run: chmod +x ./.github/ci/package_wasm.sh

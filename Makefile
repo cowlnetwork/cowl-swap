@@ -1,4 +1,5 @@
 PINNED_TOOLCHAIN := $(shell cat contract/rust-toolchain)
+WASM_FILES := cowl_swap deposit_cspr_session deposit_cowl_session cspr_to_cowl_session cowl_to_cspr_session balance_cowl_session
 LATEST_WASM_CEP18 := $(shell curl -s https://api.github.com/repos/cowlnetwork/cep18/releases/latest | jq -r '.assets[] | select(.name=="cowl-cep18-wasm.tar.gz") | .browser_download_url')
 LATEST_WASM_VESTING := $(shell curl -s https://api.github.com/repos/cowlnetwork/cowl-vesting/releases/latest | jq -r '.assets[] | select(.name=="cowl-vesting-wasm.tar.gz") | .browser_download_url')
 
@@ -9,19 +10,18 @@ prepare:
 	rustup component add rustfmt --toolchain ${PINNED_TOOLCHAIN}
 	rustup component add rust-src --toolchain ${PINNED_TOOLCHAIN}
 
-.PHONY:	build-contract
+.PHONY: build-contract
 build-contract:
 	cd contract && RUSTFLAGS="-C target-cpu=mvp" cargo build --release --target wasm32-unknown-unknown -Z build-std=std,panic_abort -p cowl-swap
-	wasm-strip target/wasm32-unknown-unknown/release/cowl_swap.wasm
+	for file in $(WASM_FILES); do \
+		wasm-strip ./target/wasm32-unknown-unknown/release/$$file.wasm; \
+	done
 
 setup-test: build-contract
 	mkdir -p tests/wasm
-	cp ./target/wasm32-unknown-unknown/release/cowl_swap.wasm tests/wasm
-	cp ./target/wasm32-unknown-unknown/release/deposit_cspr_session.wasm tests/wasm
-	cp ./target/wasm32-unknown-unknown/release/deposit_cowl_session.wasm tests/wasm
-	cp ./target/wasm32-unknown-unknown/release/cspr_to_cowl_session.wasm tests/wasm
-	cp ./target/wasm32-unknown-unknown/release/cowl_to_cspr_session.wasm tests/wasm
-	cp ./target/wasm32-unknown-unknown/release/balance_cowl_session.wasm tests/wasm
+	for file in $(WASM_FILES); do \
+		cp ./target/wasm32-unknown-unknown/release/$$file.wasm tests/wasm; \
+	done
 
 	@if [ -z "$(LATEST_WASM_CEP18)" ]; then \
 		echo "Error: cowl-cep18 WASM URL is empty."; \

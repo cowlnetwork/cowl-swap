@@ -4,7 +4,26 @@ set -e
 
 BUILD_ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." >/dev/null 2>&1 && pwd)"
 IGNORE='ignore'
-WASM_FILE_PATH_ARRAY=($(cat "$BUILD_ROOT_DIR/../Makefile" | grep 'wasm-strip' | awk -F' ' '{print $2}'))
+
+# Extract the WASM_FILES list from the external Makefile (where WASM_FILES is defined)
+WASM_FILES=$(grep 'WASM_FILES := ' "$BUILD_ROOT_DIR/../Makefile" | awk -F':=' '{print $2}' | tr -s ' ')
+
+
+# Print the WASM_FILES list
+echo "WASM_FILES: $WASM_FILES"
+
+# Add the target path and file extension to each file in WASM_FILES
+WASM_FILE_PATH_ARRAY=()
+for file in $WASM_FILES; do
+    WASM_FILE_PATH_ARRAY+=("./target/wasm32-unknown-unknown/release/$file.wasm")
+done
+
+# Print the resulting WASM_FILE_PATH_ARRAY
+echo "WASM_FILE_PATH_ARRAY:"
+for path in "${WASM_FILE_PATH_ARRAY[@]}"; do
+    echo "$path"
+done
+
 TAG=${GITHUB_REF_NAME:-local}
 TEMP_DIR="/tmp/ci_package_wasm_$TAG"
 TARBALL="cowl-swap-wasm.tar.gz"
@@ -35,6 +54,7 @@ if [ -d "$TEMP_DIR" ]; then
     echo ""
     echo "creating $TEMP_DIR/$TARBALL"
     echo ""
+    ls -al "$TEMP_DIR"
     # create the tarball
     tar -czf "$TARBALL" *.wasm --remove-files
     # Move back
