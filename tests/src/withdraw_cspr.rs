@@ -15,7 +15,7 @@ fn should_fail_withdraw_cspr_when_non_installer() {
     let (
         mut builder,
         TestContext {
-            cowl_swap_contract_package_hash,
+            cowl_swap_contract_package,
             ref test_accounts,
             ..
         },
@@ -24,7 +24,7 @@ fn should_fail_withdraw_cspr_when_non_installer() {
     let deposit_cspr = cowl_swap_deposit_cspr(
         &mut builder,
         &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U512::from_dec_str(MINIMUM_TRANSFER_AMOUNT).unwrap(),
     );
 
@@ -35,7 +35,7 @@ fn should_fail_withdraw_cspr_when_non_installer() {
     let withdraw_cspr = cowl_swap_withdraw_cspr(
         &mut builder,
         &liquidity,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U512::one(),
     );
 
@@ -56,7 +56,7 @@ fn should_withdraw_cspr() {
         mut builder,
         TestContext {
             cowl_swap_contract_hash,
-            cowl_swap_contract_package_hash,
+            cowl_swap_contract_package,
             ..
         },
     ) = setup();
@@ -64,7 +64,7 @@ fn should_withdraw_cspr() {
     let deposit_cspr = cowl_swap_deposit_cspr(
         &mut builder,
         &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U512::from_dec_str(MINIMUM_TRANSFER_AMOUNT).unwrap(),
     );
 
@@ -73,7 +73,7 @@ fn should_withdraw_cspr() {
     let withdraw_cspr = cowl_swap_withdraw_cspr(
         &mut builder,
         &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U512::from_dec_str(MINIMUM_TRANSFER_AMOUNT).unwrap(),
     );
 
@@ -91,7 +91,7 @@ fn should_fail_withdraw_cspr_more_than_contract_balance() {
     let (
         mut builder,
         TestContext {
-            cowl_swap_contract_package_hash,
+            cowl_swap_contract_package,
             ..
         },
     ) = setup();
@@ -99,7 +99,7 @@ fn should_fail_withdraw_cspr_more_than_contract_balance() {
     let deposit_cspr = cowl_swap_deposit_cspr(
         &mut builder,
         &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U512::from_dec_str(MINIMUM_TRANSFER_AMOUNT).unwrap(),
     );
 
@@ -108,7 +108,7 @@ fn should_fail_withdraw_cspr_more_than_contract_balance() {
     let withdraw_cspr = cowl_swap_withdraw_cspr(
         &mut builder,
         &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U512::from_dec_str(MINIMUM_TRANSFER_AMOUNT)
             .unwrap()
             .checked_add(U512::one())

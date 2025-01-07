@@ -31,8 +31,8 @@ use casper_types::{
 use cowl_swap::{
     constants::{
         ADMIN_LIST, ARG_AMOUNT, ARG_BALANCE_COWL, ARG_BALANCE_CSPR, ARG_CONTRACT_HASH,
-        ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH, ARG_END_TIME, ARG_EVENTS_MODE, ARG_INSTALLER,
-        ARG_NAME, ARG_OWNER, ARG_PACKAGE_HASH, ARG_RECIPIENT, ARG_START_TIME, ARG_UPGRADE_FLAG,
+        ARG_COWL_CEP18_CONTRACT_PACKAGE, ARG_END_TIME, ARG_EVENTS_MODE, ARG_INSTALLER, ARG_NAME,
+        ARG_OWNER, ARG_PACKAGE_HASH, ARG_RECIPIENT, ARG_START_TIME, ARG_UPGRADE_FLAG,
         DICT_SECURITY_BADGES, ENTRY_POINT_INSTALL, ENTRY_POINT_TRANSFER, ENTRY_POINT_TRANSFER_FROM,
         ENTRY_POINT_UPGRADE, NONE_LIST, PREFIX_ACCESS_KEY_NAME, PREFIX_CONTRACT_NAME,
         PREFIX_CONTRACT_PACKAGE_NAME, PREFIX_CONTRACT_VERSION, RATE_TIERS, TAX_RATE,
@@ -48,7 +48,7 @@ use cowl_swap::{
     rate::{get_swap_rate, validate_amount, validate_rate, verify_swap_active},
     security::{change_sec_badge, sec_check, SecurityBadge},
     utils::{
-        get_cowl_cep18_balance_for_key, get_cowl_cep18_contract_package_hash,
+        get_cowl_cep18_balance_for_key, get_cowl_cep18_contract_package,
         get_named_arg_with_user_errors, get_optional_named_arg_with_user_errors,
         get_stored_value_with_user_errors, get_verified_caller,
     },
@@ -108,7 +108,7 @@ pub extern "C" fn cspr_to_cowl() {
     let (recipient, _) = get_verified_caller();
 
     call_versioned_contract::<()>(
-        get_cowl_cep18_contract_package_hash(),
+        get_cowl_cep18_contract_package(),
         None,
         ENTRY_POINT_TRANSFER,
         runtime_args! {
@@ -160,7 +160,7 @@ pub extern "C" fn cowl_to_cspr() {
     let recipient = get_key(ARG_PACKAGE_HASH).unwrap_or_revert();
 
     call_versioned_contract::<()>(
-        get_cowl_cep18_contract_package_hash(),
+        get_cowl_cep18_contract_package(),
         None,
         ENTRY_POINT_TRANSFER_FROM,
         runtime_args! {
@@ -227,7 +227,7 @@ pub extern "C" fn withdraw_cowl() {
     let (recipient, _) = get_verified_caller();
 
     call_versioned_contract::<()>(
-        get_cowl_cep18_contract_package_hash(),
+        get_cowl_cep18_contract_package(),
         None,
         ENTRY_POINT_TRANSFER,
         runtime_args! {
@@ -289,7 +289,7 @@ pub extern "C" fn set_cowl_cep18_contract_package() {
 
     let (caller, _) = get_verified_caller();
 
-    let cowl_cep18_contract_package_key: Key = get_named_arg(ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH);
+    let cowl_cep18_contract_package_key: Key = get_named_arg(ARG_COWL_CEP18_CONTRACT_PACKAGE);
 
     let cowl_cep18_contract_package_key_hash = ContractPackageHash::from(
         cowl_cep18_contract_package_key
@@ -298,7 +298,7 @@ pub extern "C" fn set_cowl_cep18_contract_package() {
     );
 
     put_key(
-        ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH,
+        ARG_COWL_CEP18_CONTRACT_PACKAGE,
         new_uref(cowl_cep18_contract_package_key_hash).into(),
     );
 
@@ -381,14 +381,14 @@ pub extern "C" fn install() {
         revert(SwapError::ContractAlreadyInitialized);
     }
 
-    let swap_contract_package_hash_key = get_named_arg_with_user_errors::<Key>(
+    let swap_contract_package_key = get_named_arg_with_user_errors::<Key>(
         ARG_PACKAGE_HASH,
         SwapError::MissingPackageHash,
         SwapError::InvalidPackageHash,
     )
     .unwrap_or_revert();
 
-    put_key(ARG_PACKAGE_HASH, swap_contract_package_hash_key);
+    put_key(ARG_PACKAGE_HASH, swap_contract_package_key);
 
     let swap_contract_hash_key = get_named_arg_with_user_errors::<Key>(
         ARG_CONTRACT_HASH,
@@ -457,9 +457,9 @@ fn install_contract(name: &str) {
         get_optional_named_arg_with_user_errors(ARG_EVENTS_MODE, SwapError::InvalidEventsMode)
             .unwrap_or_default();
 
-    let cowl_cep18_contract_package_key: Key = get_named_arg(ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH);
+    let cowl_cep18_contract_package_key: Key = get_named_arg(ARG_COWL_CEP18_CONTRACT_PACKAGE);
 
-    let cowl_cep18_contract_package_hash = ContractPackageHash::from(
+    let cowl_cep18_contract_package = ContractPackageHash::from(
         cowl_cep18_contract_package_key
             .into_hash()
             .unwrap_or_revert_with(SwapError::InvalidTokenContractPackage),
@@ -475,8 +475,8 @@ fn install_contract(name: &str) {
         (ARG_START_TIME.to_string(), new_uref(start_time).into()),
         (ARG_END_TIME.to_string(), new_uref(end_time).into()),
         (
-            ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH.to_string(),
-            new_uref(cowl_cep18_contract_package_hash).into(),
+            ARG_COWL_CEP18_CONTRACT_PACKAGE.to_string(),
+            new_uref(cowl_cep18_contract_package).into(),
         ),
     ];
 

@@ -12,7 +12,7 @@ fn should_fail_withdraw_cowl_when_non_installer() {
     let (
         mut builder,
         TestContext {
-            cowl_swap_contract_package_hash,
+            cowl_swap_contract_package,
             ref test_accounts,
             ..
         },
@@ -23,7 +23,7 @@ fn should_fail_withdraw_cowl_when_non_installer() {
     let withdraw_cowl = cowl_swap_withdraw_cowl(
         &mut builder,
         &liquidity,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U256::one(),
     );
 
@@ -44,7 +44,7 @@ fn should_withdraw_cowl() {
         mut builder,
         TestContext {
             cowl_swap_contract_hash,
-            cowl_swap_contract_package_hash,
+            cowl_swap_contract_package,
             cowl_cep18_token_package_hash,
             ref test_accounts,
             ..
@@ -57,7 +57,7 @@ fn should_withdraw_cowl() {
         &mut builder,
         &liquidity,
         &cowl_cep18_token_package_hash,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U256::one(),
     );
 
@@ -66,7 +66,7 @@ fn should_withdraw_cowl() {
     let withdraw_cowl = cowl_swap_withdraw_cowl(
         &mut builder,
         &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U256::one(),
     );
 
@@ -85,7 +85,7 @@ fn should_fail_withdraw_cowl_more_than_contract_balance() {
     let (
         mut builder,
         TestContext {
-            cowl_swap_contract_package_hash,
+            cowl_swap_contract_package,
             cowl_cep18_token_package_hash,
             ref test_accounts,
             ..
@@ -98,7 +98,7 @@ fn should_fail_withdraw_cowl_more_than_contract_balance() {
         &mut builder,
         &liquidity,
         &cowl_cep18_token_package_hash,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U256::one(),
     );
 
@@ -107,7 +107,7 @@ fn should_fail_withdraw_cowl_more_than_contract_balance() {
     let withdraw_cowl = cowl_swap_withdraw_cowl(
         &mut builder,
         &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U256::from("2"),
     );
 

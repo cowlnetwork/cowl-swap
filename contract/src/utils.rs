@@ -329,11 +329,11 @@ fn get_named_arg_size(name: &str) -> Option<usize> {
 }
 
 #[cfg(feature = "contract-support")]
-pub fn get_cowl_cep18_contract_package_hash() -> ContractPackageHash {
-    use crate::constants::ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH;
+pub fn get_cowl_cep18_contract_package() -> ContractPackageHash {
+    use crate::constants::ARG_COWL_CEP18_CONTRACT_PACKAGE;
 
     get_stored_value_with_user_errors(
-        ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH,
+        ARG_COWL_CEP18_CONTRACT_PACKAGE,
         SwapError::MissingTokenContractPackage,
         SwapError::InvalidTokenContractPackage,
     )
@@ -345,7 +345,7 @@ pub fn get_cowl_cep18_balance_for_key(owner: &Key) -> U256 {
     use casper_types::{runtime_args, RuntimeArgs};
 
     use crate::constants::{ARG_ADDRESS, ENTRY_POINT_BALANCE_OF};
-    let contract_package_hash = get_cowl_cep18_contract_package_hash();
+    let contract_package_hash = get_cowl_cep18_contract_package();
 
     call_versioned_contract(
         contract_package_hash,

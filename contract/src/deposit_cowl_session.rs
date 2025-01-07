@@ -12,8 +12,8 @@ use casper_contract::{
 use casper_types::{runtime_args, ContractPackageHash, Key, RuntimeArgs, U256};
 use cowl_swap::{
     constants::{
-        ARG_AMOUNT, ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH, ARG_COWL_SWAP_CONTRACT_PACKAGE_HASH,
-        ARG_RECIPIENT, ENTRY_POINT_TRANSFER,
+        ARG_AMOUNT, ARG_COWL_CEP18_CONTRACT_PACKAGE, ARG_COWL_SWAP_CONTRACT_PACKAGE, ARG_RECIPIENT,
+        ENTRY_POINT_TRANSFER,
     },
     error::SwapError,
 };
@@ -25,23 +25,22 @@ pub extern "C" fn call() {
         revert(SwapError::InvalidAmount);
     }
 
-    let cowl_cep18_contract_package_key: Key = get_named_arg(ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH);
+    let cowl_cep18_contract_package_key: Key = get_named_arg(ARG_COWL_CEP18_CONTRACT_PACKAGE);
 
-    let cowl_cep18_contract_package_hash = ContractPackageHash::from(
+    let cowl_cep18_contract_package = ContractPackageHash::from(
         cowl_cep18_contract_package_key
             .into_hash()
             .unwrap_or_revert_with(SwapError::InvalidTokenContractPackage),
     );
 
-    let cowl_swap_contract_package_hash_key: Key =
-        get_named_arg(ARG_COWL_SWAP_CONTRACT_PACKAGE_HASH);
+    let cowl_swap_contract_package_key: Key = get_named_arg(ARG_COWL_SWAP_CONTRACT_PACKAGE);
 
     call_versioned_contract::<()>(
-        cowl_cep18_contract_package_hash,
+        cowl_cep18_contract_package,
         None,
         ENTRY_POINT_TRANSFER,
         runtime_args! {
-            ARG_RECIPIENT => cowl_swap_contract_package_hash_key,
+            ARG_RECIPIENT => cowl_swap_contract_package_key,
             ARG_AMOUNT => amount
         },
     );

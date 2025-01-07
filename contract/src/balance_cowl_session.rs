@@ -14,13 +14,13 @@ use casper_contract::{
 };
 use casper_types::{runtime_args, ContractPackageHash, Key, RuntimeArgs, U256};
 use cowl_swap::constants::{
-    ARG_ADDRESS, ARG_BALANCE_COWL, ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH, ENTRY_POINT_BALANCE_OF,
+    ARG_ADDRESS, ARG_BALANCE_COWL, ARG_COWL_CEP18_CONTRACT_PACKAGE, ENTRY_POINT_BALANCE_OF,
 };
 
 #[no_mangle]
 pub extern "C" fn call() {
     let cowl_cep18_token_package_hash: ContractPackageHash = ContractPackageHash::new(
-        get_named_arg::<Key>(ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH)
+        get_named_arg::<Key>(ARG_COWL_CEP18_CONTRACT_PACKAGE)
             .into_hash()
             .unwrap_or_revert(),
     );

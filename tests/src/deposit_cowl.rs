@@ -13,7 +13,7 @@ fn should_deposit_cowl() {
         mut builder,
         TestContext {
             cowl_swap_contract_hash,
-            cowl_swap_contract_package_hash,
+            cowl_swap_contract_package,
             cowl_cep18_token_package_hash,
             ref test_accounts,
             ..
@@ -26,7 +26,7 @@ fn should_deposit_cowl() {
         &mut builder,
         &liquidity,
         &cowl_cep18_token_package_hash,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U256::one(),
     );
 
@@ -35,7 +35,7 @@ fn should_deposit_cowl() {
     let balance_cowl = cowl_swap_balance_cowl(
         &mut builder,
         &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
     );
 
     balance_cowl.expect_success().commit();

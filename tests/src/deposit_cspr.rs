@@ -14,7 +14,7 @@ fn should_fail_deposit_cspr_when_non_installer() {
     let (
         mut builder,
         TestContext {
-            cowl_swap_contract_package_hash,
+            cowl_swap_contract_package,
             ref test_accounts,
             ..
         },
@@ -25,7 +25,7 @@ fn should_fail_deposit_cspr_when_non_installer() {
     let deposit_cspr = cowl_swap_deposit_cspr(
         &mut builder,
         &liquidity,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U512::one(),
     );
 
@@ -45,7 +45,7 @@ fn should_deposit_cspr_when_installer() {
         mut builder,
         TestContext {
             cowl_swap_contract_hash,
-            cowl_swap_contract_package_hash,
+            cowl_swap_contract_package,
             ..
         },
     ) = setup();
@@ -53,7 +53,7 @@ fn should_deposit_cspr_when_installer() {
     let deposit_cspr = cowl_swap_deposit_cspr(
         &mut builder,
         &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         U512::from_dec_str(MINIMUM_TRANSFER_AMOUNT).unwrap(),
     );
 
@@ -62,7 +62,7 @@ fn should_deposit_cspr_when_installer() {
     let balance_cspr = cowl_swap_balance_cspr(
         &mut builder,
         &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
     );
 
     balance_cspr.expect_success().commit();

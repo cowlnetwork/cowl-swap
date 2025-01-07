@@ -13,7 +13,7 @@ fn should_cowl_to_cspr() {
     let (
         mut builder,
         TestContext {
-            cowl_swap_contract_package_hash,
+            cowl_swap_contract_package,
             cowl_cep18_token_package_hash,
             cowl_swap_contract_hash,
             ref test_accounts,
@@ -30,7 +30,7 @@ fn should_cowl_to_cspr() {
         &mut builder,
         &liquidity,
         &cowl_cep18_token_package_hash,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         cowl_pool_amount,
     );
 
@@ -48,7 +48,7 @@ fn should_cowl_to_cspr() {
     let cspr_to_cowl = cowl_swap_cspr_to_cowl(
         &mut builder,
         &account_user_1,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         cspr_transfer_amount,
     );
 
@@ -90,7 +90,7 @@ fn should_cowl_to_cspr() {
         &mut builder,
         &account_user_1,
         &cowl_cep18_token_package_hash,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
         actual_balance_cowl,
     );
 
@@ -126,7 +126,7 @@ fn should_cowl_to_cspr() {
     let balance_cowl = cowl_swap_balance_cowl(
         &mut builder,
         &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package_hash,
+        &cowl_swap_contract_package,
     );
 
     balance_cowl.expect_success().commit();

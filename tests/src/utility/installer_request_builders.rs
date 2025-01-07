@@ -8,11 +8,11 @@ use casper_types::{
 };
 use cowl_swap::{
     constants::{
-        ADMIN_LIST, ARG_ADDRESS, ARG_AMOUNT, ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH,
-        ARG_COWL_SWAP_CONTRACT_PACKAGE_HASH, ARG_END_TIME, ARG_EVENTS_MODE, ARG_NAME,
-        ARG_START_TIME, ENTRY_POINT_BALANCE_COWL, ENTRY_POINT_BALANCE_CSPR,
-        ENTRY_POINT_CHANGE_SECURITY, ENTRY_POINT_SET_MODALITIES, ENTRY_POINT_UPDATE_TIMES,
-        ENTRY_POINT_WITHDRAW_COWL, ENTRY_POINT_WITHDRAW_CSPR, NONE_LIST,
+        ADMIN_LIST, ARG_ADDRESS, ARG_AMOUNT, ARG_COWL_CEP18_CONTRACT_PACKAGE,
+        ARG_COWL_SWAP_CONTRACT_PACKAGE, ARG_END_TIME, ARG_EVENTS_MODE, ARG_NAME, ARG_START_TIME,
+        ENTRY_POINT_BALANCE_COWL, ENTRY_POINT_BALANCE_CSPR, ENTRY_POINT_CHANGE_SECURITY,
+        ENTRY_POINT_SET_MODALITIES, ENTRY_POINT_UPDATE_TIMES, ENTRY_POINT_WITHDRAW_COWL,
+        ENTRY_POINT_WITHDRAW_CSPR, NONE_LIST,
     },
     enums::EventsMode,
 };
@@ -30,7 +30,7 @@ use super::constants::{
 #[derive(Clone)]
 pub(crate) struct TestContext {
     pub(crate) cowl_swap_contract_hash: ContractHash,
-    pub(crate) cowl_swap_contract_package_hash: ContractPackageHash,
+    pub(crate) cowl_swap_contract_package: ContractPackageHash,
     pub(crate) cowl_cep18_token_contract_hash: ContractHash,
     pub(crate) cowl_cep18_token_package_hash: ContractPackageHash,
     pub(crate) cowl_vesting_contract_hash: ContractHash,
@@ -68,7 +68,7 @@ pub fn setup_with_args(mut install_args: RuntimeArgs) -> (InMemoryWasmTestBuilde
 
     // Install vesting contract with token package as install ARG
     let _ = install_args.insert(
-        ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH.to_string(),
+        ARG_COWL_CEP18_CONTRACT_PACKAGE.to_string(),
         Key::from(cowl_cep18_token_package_hash),
     );
 
@@ -96,7 +96,7 @@ pub fn setup_with_args(mut install_args: RuntimeArgs) -> (InMemoryWasmTestBuilde
         .map(ContractHash::new)
         .expect("should have contract hash");
 
-    let cowl_swap_contract_package_hash = account
+    let cowl_swap_contract_package = account
         .named_keys()
         .get(SWAP_CONTRACT_PACKAGE_HASH_KEY_NAME)
         .and_then(|key| key.into_hash())
@@ -105,7 +105,7 @@ pub fn setup_with_args(mut install_args: RuntimeArgs) -> (InMemoryWasmTestBuilde
 
     let test_context = TestContext {
         cowl_swap_contract_hash,
-        cowl_swap_contract_package_hash,
+        cowl_swap_contract_package,
         cowl_cep18_token_contract_hash,
         cowl_cep18_token_package_hash,
         cowl_vesting_contract_hash,
@@ -187,7 +187,7 @@ pub fn cowl_swap_deposit_cowl<'a>(
     builder: &'a mut InMemoryWasmTestBuilder,
     sender_account: &'a AccountHash,
     cowl_cep18_contract_package_key: &'a ContractPackageHash,
-    cowl_swap_contract_package_hash: &'a ContractPackageHash,
+    cowl_swap_contract_package: &'a ContractPackageHash,
     amount: U256,
 ) -> &'a mut InMemoryWasmTestBuilder {
     let deposit_cowl_request = ExecuteRequestBuilder::standard(
@@ -195,8 +195,8 @@ pub fn cowl_swap_deposit_cowl<'a>(
         SWAP_DEPOSIT_COWL_SESSION_WASM,
         runtime_args! {
             ARG_AMOUNT => amount,
-            ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH => Key::from(*cowl_cep18_contract_package_key),
-            ARG_COWL_SWAP_CONTRACT_PACKAGE_HASH => Key::from(*cowl_swap_contract_package_hash)
+            ARG_COWL_CEP18_CONTRACT_PACKAGE => Key::from(*cowl_cep18_contract_package_key),
+            ARG_COWL_SWAP_CONTRACT_PACKAGE => Key::from(*cowl_swap_contract_package)
         },
     )
     .build();
@@ -206,7 +206,7 @@ pub fn cowl_swap_deposit_cowl<'a>(
 pub fn cowl_swap_deposit_cspr<'a>(
     builder: &'a mut InMemoryWasmTestBuilder,
     sender_account: &'a AccountHash,
-    cowl_swap_contract_package_hash: &'a ContractPackageHash,
+    cowl_swap_contract_package: &'a ContractPackageHash,
     amount: U512,
 ) -> &'a mut InMemoryWasmTestBuilder {
     let swap_deposit_cspr_request = ExecuteRequestBuilder::standard(
@@ -214,7 +214,7 @@ pub fn cowl_swap_deposit_cspr<'a>(
         SWAP_DEPOSIT_CSPR_SESSION_WASM,
         runtime_args! {
             ARG_AMOUNT => amount,
-            ARG_COWL_SWAP_CONTRACT_PACKAGE_HASH => Key::from(*cowl_swap_contract_package_hash)
+            ARG_COWL_SWAP_CONTRACT_PACKAGE => Key::from(*cowl_swap_contract_package)
         },
     )
     .build();
@@ -225,11 +225,11 @@ pub fn cowl_swap_deposit_cspr<'a>(
 pub fn cowl_swap_balance_cspr<'a>(
     builder: &'a mut InMemoryWasmTestBuilder,
     sender_account: &'a AccountHash,
-    cowl_swap_contract_package_hash: &'a ContractPackageHash,
+    cowl_swap_contract_package: &'a ContractPackageHash,
 ) -> &'a mut InMemoryWasmTestBuilder {
     let withdraw_cspr_request = ExecuteRequestBuilder::versioned_contract_call_by_hash(
         *sender_account,
-        *cowl_swap_contract_package_hash,
+        *cowl_swap_contract_package,
         None,
         ENTRY_POINT_BALANCE_CSPR,
         runtime_args! {},
@@ -241,11 +241,11 @@ pub fn cowl_swap_balance_cspr<'a>(
 pub fn cowl_swap_balance_cowl<'a>(
     builder: &'a mut InMemoryWasmTestBuilder,
     sender_account: &'a AccountHash,
-    cowl_swap_contract_package_hash: &'a ContractPackageHash,
+    cowl_swap_contract_package: &'a ContractPackageHash,
 ) -> &'a mut InMemoryWasmTestBuilder {
     let withdraw_cowl_request = ExecuteRequestBuilder::versioned_contract_call_by_hash(
         *sender_account,
-        *cowl_swap_contract_package_hash,
+        *cowl_swap_contract_package,
         None,
         ENTRY_POINT_BALANCE_COWL,
         runtime_args! {},
@@ -265,7 +265,7 @@ pub fn cowl_cep18_token_balance_cowl<'a>(
         SWAP_BALANCE_COWL_SESSION_WASM,
         runtime_args! {
             ARG_ADDRESS => address,
-            ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH => Key::from(*cowl_cep18_token_package_hash)
+            ARG_COWL_CEP18_CONTRACT_PACKAGE => Key::from(*cowl_cep18_token_package_hash)
 
         },
     )
@@ -276,12 +276,12 @@ pub fn cowl_cep18_token_balance_cowl<'a>(
 pub fn cowl_swap_withdraw_cowl<'a>(
     builder: &'a mut InMemoryWasmTestBuilder,
     sender_account: &'a AccountHash,
-    cowl_swap_contract_package_hash: &'a ContractPackageHash,
+    cowl_swap_contract_package: &'a ContractPackageHash,
     amount: U256,
 ) -> &'a mut InMemoryWasmTestBuilder {
     let withdraw_cowl_request = ExecuteRequestBuilder::versioned_contract_call_by_hash(
         *sender_account,
-        *cowl_swap_contract_package_hash,
+        *cowl_swap_contract_package,
         None,
         ENTRY_POINT_WITHDRAW_COWL,
         runtime_args! {
@@ -295,12 +295,12 @@ pub fn cowl_swap_withdraw_cowl<'a>(
 pub fn cowl_swap_withdraw_cspr<'a>(
     builder: &'a mut InMemoryWasmTestBuilder,
     sender_account: &'a AccountHash,
-    cowl_swap_contract_package_hash: &'a ContractPackageHash,
+    cowl_swap_contract_package: &'a ContractPackageHash,
     amount: U512,
 ) -> &'a mut InMemoryWasmTestBuilder {
     let withdraw_cspr_request = ExecuteRequestBuilder::versioned_contract_call_by_hash(
         *sender_account,
-        *cowl_swap_contract_package_hash,
+        *cowl_swap_contract_package,
         None,
         ENTRY_POINT_WITHDRAW_CSPR,
         runtime_args! {
@@ -314,7 +314,7 @@ pub fn cowl_swap_withdraw_cspr<'a>(
 pub fn cowl_swap_cspr_to_cowl<'a>(
     builder: &'a mut InMemoryWasmTestBuilder,
     sender_account: &'a AccountHash,
-    cowl_swap_contract_package_hash: &'a ContractPackageHash,
+    cowl_swap_contract_package: &'a ContractPackageHash,
     amount: U512,
 ) -> &'a mut InMemoryWasmTestBuilder {
     let cspr_to_cowl_request = ExecuteRequestBuilder::standard(
@@ -322,7 +322,7 @@ pub fn cowl_swap_cspr_to_cowl<'a>(
         SWAP_CSPR_TO_COWL_SESSION_WASM,
         runtime_args! {
             ARG_AMOUNT => amount,
-            ARG_COWL_SWAP_CONTRACT_PACKAGE_HASH => Key::from(*cowl_swap_contract_package_hash)
+            ARG_COWL_SWAP_CONTRACT_PACKAGE => Key::from(*cowl_swap_contract_package)
 
         },
     )
@@ -334,8 +334,8 @@ pub fn cowl_swap_cspr_to_cowl<'a>(
 pub fn cowl_swap_cowl_to_cspr<'a>(
     builder: &'a mut InMemoryWasmTestBuilder,
     sender_account: &'a AccountHash,
-    cowl_cep18_contract_package_hash: &'a ContractPackageHash,
-    cowl_swap_contract_package_hash: &'a ContractPackageHash,
+    cowl_cep18_contract_package: &'a ContractPackageHash,
+    cowl_swap_contract_package: &'a ContractPackageHash,
     amount: U256,
 ) -> &'a mut InMemoryWasmTestBuilder {
     let cowl_to_cspr_request = ExecuteRequestBuilder::standard(
@@ -343,8 +343,8 @@ pub fn cowl_swap_cowl_to_cspr<'a>(
         SWAP_COWL_TO_CSPR_SESSION_WASM,
         runtime_args! {
             ARG_AMOUNT => amount,
-            ARG_COWL_CEP18_CONTRACT_PACKAGE_HASH => Key::from(*cowl_cep18_contract_package_hash),
-            ARG_COWL_SWAP_CONTRACT_PACKAGE_HASH => Key::from(*cowl_swap_contract_package_hash)
+            ARG_COWL_CEP18_CONTRACT_PACKAGE => Key::from(*cowl_cep18_contract_package),
+            ARG_COWL_SWAP_CONTRACT_PACKAGE => Key::from(*cowl_swap_contract_package)
 
         },
     )

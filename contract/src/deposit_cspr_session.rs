@@ -15,9 +15,7 @@ use casper_contract::{
 };
 use casper_types::{runtime_args, ContractPackageHash, Key, RuntimeArgs, U512};
 use cowl_swap::{
-    constants::{
-        ARG_AMOUNT, ARG_COWL_SWAP_CONTRACT_PACKAGE_HASH, ARG_PURSE, ENTRY_POINT_DEPOSIT_CSPR,
-    },
+    constants::{ARG_AMOUNT, ARG_COWL_SWAP_CONTRACT_PACKAGE, ARG_PURSE, ENTRY_POINT_DEPOSIT_CSPR},
     error::SwapError,
 };
 
@@ -25,11 +23,10 @@ use cowl_swap::{
 pub extern "C" fn call() {
     let amount: U512 = get_named_arg(ARG_AMOUNT);
 
-    let cowl_swap_contract_package_hash_key: Key =
-        get_named_arg(ARG_COWL_SWAP_CONTRACT_PACKAGE_HASH);
+    let cowl_swap_contract_package_key: Key = get_named_arg(ARG_COWL_SWAP_CONTRACT_PACKAGE);
 
-    let cowl_swap_contract_package_hash_key_hash = ContractPackageHash::from(
-        cowl_swap_contract_package_hash_key
+    let cowl_swap_contract_package_key_hash = ContractPackageHash::from(
+        cowl_swap_contract_package_key
             .into_hash()
             .unwrap_or_revert_with(SwapError::MissingTokenContractPackage),
     );
@@ -40,7 +37,7 @@ pub extern "C" fn call() {
     transfer_from_purse_to_purse(source_purse, local_purse, amount, None).unwrap_or_revert();
 
     call_versioned_contract(
-        cowl_swap_contract_package_hash_key_hash,
+        cowl_swap_contract_package_key_hash,
         None,
         ENTRY_POINT_DEPOSIT_CSPR,
         runtime_args! {
