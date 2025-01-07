@@ -1,4 +1,5 @@
 PINNED_TOOLCHAIN := $(shell cat contract/rust-toolchain)
+WASM_FILES := cowl_swap deposit_cspr_session deposit_cowl_session cspr_to_cowl_session cowl_to_cspr_session balance_cowl_session
 
 prepare:
 	rustup install ${PINNED_TOOLCHAIN} # Ensure the correct nightly is installed
