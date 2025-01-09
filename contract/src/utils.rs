@@ -354,3 +354,11 @@ pub fn get_cowl_cep18_balance_for_key(owner: &Key) -> U256 {
         runtime_args! {ARG_ADDRESS => owner },
     )
 }
+
+#[cfg(feature = "contract-support")]
+pub fn get_current_time_in_seconds() -> u64 {
+    use casper_contract::{contract_api::runtime::get_blocktime, unwrap_or_revert::UnwrapOrRevert};
+
+    let current_time_in_ms: u64 = get_blocktime().into();
+    current_time_in_ms.checked_div(1000).unwrap_or_revert()
+}

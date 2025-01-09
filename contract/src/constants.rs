@@ -31,6 +31,7 @@ pub const ARG_BALANCE_CSPR: &str = "balance_cspr";
 pub const ARG_CONTRACT_HASH: &str = "contract_hash";
 pub const ARG_COWL_CEP18_CONTRACT_PACKAGE: &str = "cowl_cep18_contract_package";
 pub const ARG_COWL_SWAP_CONTRACT_PACKAGE: &str = "cowl_swap_contract_package";
+pub const ARG_DURATION: &str = "duration";
 pub const ARG_END_TIME: &str = "end_time";
 pub const ARG_EVENTS_MODE: &str = "events_mode";
 pub const ARG_INSTALLER: &str = "installer";

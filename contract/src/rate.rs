@@ -51,12 +51,9 @@ pub fn get_swap_rate(cspr_amount: U512) -> Result<U512, SwapError> {
 #[cfg(feature = "contract-support")]
 pub fn verify_swap_active() -> Result<(), SwapError> {
     use crate::constants::{ARG_END_TIME, ARG_START_TIME};
-    use crate::utils::get_stored_value_with_user_errors;
-    use casper_contract::contract_api::runtime::get_blocktime;
+    use crate::utils::{get_current_time_in_seconds, get_stored_value_with_user_errors};
 
-    // Get the current block time in milliseconds and convert to seconds
-    let current_time_in_ms: u64 = get_blocktime().into();
-    let current_time_in_seconds = current_time_in_ms / 1000;
+    let current_time = get_current_time_in_seconds();
 
     let start_time: u64 = get_stored_value_with_user_errors(
         ARG_START_TIME,
@@ -70,10 +67,10 @@ pub fn verify_swap_active() -> Result<(), SwapError> {
     );
 
     // Check if the current time falls within the swap window
-    if current_time_in_seconds < start_time {
+    if current_time < start_time {
         return Err(SwapError::SwapNotActive);
     }
-    if current_time_in_seconds > end_time {
+    if current_time > end_time {
         return Err(SwapError::SwapExpired);
     }
 

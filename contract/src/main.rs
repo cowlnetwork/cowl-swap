@@ -31,11 +31,12 @@ use casper_types::{
 use cowl_swap::{
     constants::{
         ADMIN_LIST, ARG_AMOUNT, ARG_BALANCE_COWL, ARG_BALANCE_CSPR, ARG_CONTRACT_HASH,
-        ARG_COWL_CEP18_CONTRACT_PACKAGE, ARG_END_TIME, ARG_EVENTS_MODE, ARG_INSTALLER, ARG_NAME,
-        ARG_OWNER, ARG_PACKAGE_HASH, ARG_RECIPIENT, ARG_START_TIME, ARG_UPGRADE_FLAG,
-        DICT_SECURITY_BADGES, ENTRY_POINT_INSTALL, ENTRY_POINT_TRANSFER, ENTRY_POINT_TRANSFER_FROM,
-        ENTRY_POINT_UPGRADE, NONE_LIST, PREFIX_ACCESS_KEY_NAME, PREFIX_CONTRACT_NAME,
-        PREFIX_CONTRACT_PACKAGE_NAME, PREFIX_CONTRACT_VERSION, RATE_TIERS, TAX_RATE,
+        ARG_COWL_CEP18_CONTRACT_PACKAGE, ARG_DURATION, ARG_END_TIME, ARG_EVENTS_MODE,
+        ARG_INSTALLER, ARG_NAME, ARG_OWNER, ARG_PACKAGE_HASH, ARG_RECIPIENT, ARG_START_TIME,
+        ARG_UPGRADE_FLAG, DICT_SECURITY_BADGES, ENTRY_POINT_INSTALL, ENTRY_POINT_TRANSFER,
+        ENTRY_POINT_TRANSFER_FROM, ENTRY_POINT_UPGRADE, NONE_LIST, PREFIX_ACCESS_KEY_NAME,
+        PREFIX_CONTRACT_NAME, PREFIX_CONTRACT_PACKAGE_NAME, PREFIX_CONTRACT_VERSION, RATE_TIERS,
+        TAX_RATE,
     },
     entry_points::generate_entry_points,
     enums::EventsMode,
@@ -49,8 +50,9 @@ use cowl_swap::{
     security::{change_sec_badge, sec_check, SecurityBadge},
     utils::{
         get_cowl_cep18_balance_for_key, get_cowl_cep18_contract_package,
-        get_named_arg_with_user_errors, get_optional_named_arg_with_user_errors,
-        get_stored_value_with_user_errors, get_verified_caller,
+        get_current_time_in_seconds, get_named_arg_with_user_errors,
+        get_optional_named_arg_with_user_errors, get_stored_value_with_user_errors,
+        get_verified_caller,
     },
 };
 
@@ -270,7 +272,13 @@ pub extern "C" fn update_times() {
     sec_check(vec![SecurityBadge::Admin]);
 
     let new_start_time: u64 = get_named_arg(ARG_START_TIME);
-    let new_end_time: u64 = get_named_arg(ARG_END_TIME);
+    let duration: u64 = get_named_arg(ARG_DURATION);
+
+    let current_time = get_current_time_in_seconds();
+
+    let new_end_time = current_time
+        .checked_add(duration)
+        .unwrap_or_revert_with(SwapError::InvalidTimeWindow);
 
     if new_end_time <= new_start_time {
         revert(SwapError::InvalidTimeWindow)
@@ -466,7 +474,12 @@ fn install_contract(name: &str) {
     );
 
     let start_time: u64 = get_named_arg(ARG_START_TIME);
-    let end_time: u64 = get_named_arg(ARG_END_TIME);
+    let duration: u64 = get_named_arg(ARG_DURATION);
+    let current_time = get_current_time_in_seconds();
+
+    let end_time: u64 = current_time
+        .checked_add(duration)
+        .unwrap_or_revert_with(SwapError::InvalidEndTime);
 
     let keys = vec![
         (ARG_NAME.to_string(), new_uref(name).into()),

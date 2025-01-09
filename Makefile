@@ -12,6 +12,11 @@ prepare:
 build-contract:
 	cd contract && RUSTFLAGS="-C target-cpu=mvp" cargo build --release --target wasm32-unknown-unknown -Z build-std=std,panic_abort -p cowl-swap
 	wasm-strip target/wasm32-unknown-unknown/release/cowl_swap.wasm
+	wasm-strip target/wasm32-unknown-unknown/release/deposit_cspr_session.wasm
+	wasm-strip target/wasm32-unknown-unknown/release/deposit_cowl_session.wasm
+	wasm-strip target/wasm32-unknown-unknown/release/cspr_to_cowl_session.wasm
+	wasm-strip target/wasm32-unknown-unknown/release/cowl_to_cspr_session.wasm
+	wasm-strip target/wasm32-unknown-unknown/release/balance_cowl_session.wasm
 
 setup-test: build-contract copy-wasm
 	$(eval LATEST_WASM_CEP18=$(shell curl -s https://api.github.com/repos/cowlnetwork/cep18/releases/latest | jq -r '.assets[] | select(.name=="cowl-cep18-wasm.tar.gz") | .browser_download_url'))

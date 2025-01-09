@@ -9,7 +9,7 @@ use casper_types::{
 use cowl_swap::{
     constants::{
         ADMIN_LIST, ARG_ADDRESS, ARG_AMOUNT, ARG_COWL_CEP18_CONTRACT_PACKAGE,
-        ARG_COWL_SWAP_CONTRACT_PACKAGE, ARG_END_TIME, ARG_EVENTS_MODE, ARG_NAME, ARG_START_TIME,
+        ARG_COWL_SWAP_CONTRACT_PACKAGE, ARG_DURATION, ARG_EVENTS_MODE, ARG_NAME, ARG_START_TIME,
         ENTRY_POINT_BALANCE_COWL, ENTRY_POINT_BALANCE_CSPR, ENTRY_POINT_CHANGE_SECURITY,
         ENTRY_POINT_SET_MODALITIES, ENTRY_POINT_UPDATE_TIMES, ENTRY_POINT_WITHDRAW_COWL,
         ENTRY_POINT_WITHDRAW_CSPR, NONE_LIST,
@@ -46,7 +46,7 @@ pub fn default_args() -> RuntimeArgs {
         ARG_NAME => SWAP_TEST_NAME,
         ARG_EVENTS_MODE => EventsMode::CES as u8,
         ARG_START_TIME => 0_u64,
-        ARG_END_TIME => 86400_u64,
+        ARG_DURATION => 86400_u64,
     }
 }
 
@@ -168,7 +168,7 @@ pub fn cowl_swap_update_times<'a>(
     builder: &'a mut InMemoryWasmTestBuilder,
     cowl_swap: &'a ContractHash,
     new_start_time: u64,
-    new_end_time: u64,
+    duration: u64,
 ) -> &'a mut InMemoryWasmTestBuilder {
     let update_times_request = ExecuteRequestBuilder::contract_call_by_hash(
         *DEFAULT_ACCOUNT_ADDR,
@@ -176,7 +176,7 @@ pub fn cowl_swap_update_times<'a>(
         ENTRY_POINT_UPDATE_TIMES,
         runtime_args! {
             ARG_START_TIME => new_start_time,
-            ARG_END_TIME => new_end_time,
+            ARG_DURATION => duration,
         },
     )
     .build();
@@ -243,7 +243,7 @@ pub fn cowl_swap_balance_cowl<'a>(
     sender_account: &'a AccountHash,
     cowl_swap_contract_package: &'a ContractPackageHash,
 ) -> &'a mut InMemoryWasmTestBuilder {
-    let withdraw_cowl_request = ExecuteRequestBuilder::versioned_contract_call_by_hash(
+    let balance_cowl_request = ExecuteRequestBuilder::versioned_contract_call_by_hash(
         *sender_account,
         *cowl_swap_contract_package,
         None,
@@ -251,7 +251,7 @@ pub fn cowl_swap_balance_cowl<'a>(
         runtime_args! {},
     )
     .build();
-    builder.exec(withdraw_cowl_request)
+    builder.exec(balance_cowl_request)
 }
 
 pub fn cowl_cep18_token_balance_cowl<'a>(
@@ -260,7 +260,7 @@ pub fn cowl_cep18_token_balance_cowl<'a>(
     cowl_cep18_token_package_hash: &'a ContractPackageHash,
     address: &'a Key,
 ) -> &'a mut InMemoryWasmTestBuilder {
-    let withdraw_cowl_request = ExecuteRequestBuilder::standard(
+    let balance_cowl_request = ExecuteRequestBuilder::standard(
         *sender_account,
         SWAP_BALANCE_COWL_SESSION_WASM,
         runtime_args! {
@@ -270,7 +270,7 @@ pub fn cowl_cep18_token_balance_cowl<'a>(
         },
     )
     .build();
-    builder.exec(withdraw_cowl_request)
+    builder.exec(balance_cowl_request)
 }
 
 pub fn cowl_swap_withdraw_cowl<'a>(
@@ -370,9 +370,9 @@ fn merge_args(install_args: RuntimeArgs) -> RuntimeArgs {
             merged_args.insert_cl_value(ARG_START_TIME, default_name_value.clone());
         }
     }
-    if merged_args.get(ARG_END_TIME).is_none() {
-        if let Some(default_name_value) = default_args().get(ARG_END_TIME) {
-            merged_args.insert_cl_value(ARG_END_TIME, default_name_value.clone());
+    if merged_args.get(ARG_DURATION).is_none() {
+        if let Some(default_name_value) = default_args().get(ARG_DURATION) {
+            merged_args.insert_cl_value(ARG_DURATION, default_name_value.clone());
         }
     }
     merged_args
