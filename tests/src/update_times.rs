@@ -30,7 +30,7 @@ fn should_fail_update_times_contract() {
     ) = setup();
 
     let update_times =
-        cowl_swap_update_times(&mut builder, &cowl_swap_contract_hash, 1000_u64, 10_u64);
+        cowl_swap_update_times(&mut builder, &cowl_swap_contract_hash, 1000_u64, 0_u64);
     update_times.expect_failure();
 
     let error = builder.get_error().expect("must have error");

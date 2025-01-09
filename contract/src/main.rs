@@ -50,9 +50,8 @@ use cowl_swap::{
     security::{change_sec_badge, sec_check, SecurityBadge},
     utils::{
         get_cowl_cep18_balance_for_key, get_cowl_cep18_contract_package,
-        get_current_time_in_seconds, get_named_arg_with_user_errors,
-        get_optional_named_arg_with_user_errors, get_stored_value_with_user_errors,
-        get_verified_caller,
+        get_named_arg_with_user_errors, get_optional_named_arg_with_user_errors,
+        get_stored_value_with_user_errors, get_verified_caller,
     },
 };
 
@@ -274,9 +273,7 @@ pub extern "C" fn update_times() {
     let new_start_time: u64 = get_named_arg(ARG_START_TIME);
     let duration: u64 = get_named_arg(ARG_DURATION);
 
-    let current_time = get_current_time_in_seconds();
-
-    let new_end_time = current_time
+    let new_end_time = new_start_time
         .checked_add(duration)
         .unwrap_or_revert_with(SwapError::InvalidTimeWindow);
 
@@ -475,9 +472,8 @@ fn install_contract(name: &str) {
 
     let start_time: u64 = get_named_arg(ARG_START_TIME);
     let duration: u64 = get_named_arg(ARG_DURATION);
-    let current_time = get_current_time_in_seconds();
 
-    let end_time: u64 = current_time
+    let end_time: u64 = start_time
         .checked_add(duration)
         .unwrap_or_revert_with(SwapError::InvalidEndTime);
 
