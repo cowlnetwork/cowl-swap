@@ -1,11 +1,10 @@
-use casper_engine_test_support::DEFAULT_ACCOUNT_ADDR;
 use casper_types::{Key, U256, U512};
 use cowl_swap::constants::{ARG_BALANCE_COWL, RATE_TIERS};
 use vesting_tests::constants::{ACCOUNT_LIQUIDITY, ACCOUNT_USER_1};
 
 use crate::utility::installer_request_builders::{
-    cowl_cep18_token_balance_cowl, cowl_swap_balance_cowl, cowl_swap_cowl_to_cspr,
-    cowl_swap_cspr_to_cowl, cowl_swap_deposit_cowl, setup, TestContext,
+    cowl_cep18_token_balance_cowl, cowl_swap_cowl_to_cspr, cowl_swap_cspr_to_cowl,
+    cowl_swap_deposit_cowl, setup, TestContext,
 };
 
 #[test]
@@ -122,14 +121,6 @@ fn should_cowl_to_cspr() {
         .expect("should be U256.");
 
     assert_eq!(actual_balance_cowl, U256::zero());
-
-    let balance_cowl = cowl_swap_balance_cowl(
-        &mut builder,
-        &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package,
-    );
-
-    balance_cowl.expect_success().commit();
 
     let swap_contract = builder
         .get_contract(cowl_swap_contract_hash)

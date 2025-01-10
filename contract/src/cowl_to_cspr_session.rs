@@ -73,7 +73,7 @@ pub extern "C" fn call() {
         let cowl_swap_contract_package_key_hash = ContractPackageHash::from(
             cowl_swap_contract_package_key
                 .into_hash()
-                .unwrap_or_revert_with(SwapError::MissingTokenContractPackage),
+                .unwrap_or_revert_with(SwapError::InvalidPackageHash),
         );
 
         call_versioned_contract::<()>(

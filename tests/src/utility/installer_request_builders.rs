@@ -222,7 +222,8 @@ pub fn cowl_swap_deposit_cspr<'a>(
     builder.exec(swap_deposit_cspr_request)
 }
 
-pub fn cowl_swap_balance_cspr<'a>(
+// Auto executed by the contract, just for convenience
+pub fn _cowl_swap_balance_cspr_update<'a>(
     builder: &'a mut InMemoryWasmTestBuilder,
     sender_account: &'a AccountHash,
     cowl_swap_contract_package: &'a ContractPackageHash,
@@ -238,7 +239,8 @@ pub fn cowl_swap_balance_cspr<'a>(
     builder.exec(withdraw_cspr_request)
 }
 
-pub fn cowl_swap_balance_cowl<'a>(
+// Auto executed by the contract, just for convenience
+pub fn _cowl_swap_balance_cowl_update<'a>(
     builder: &'a mut InMemoryWasmTestBuilder,
     sender_account: &'a AccountHash,
     cowl_swap_contract_package: &'a ContractPackageHash,

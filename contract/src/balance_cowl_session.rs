@@ -29,12 +29,12 @@ pub extern "C" fn call() {
     let balance_args = runtime_args! {
         ARG_ADDRESS => address,
     };
-    let result: U256 = call_versioned_contract(
+    let balance: U256 = call_versioned_contract(
         cowl_cep18_token_package_hash,
         None,
         ENTRY_POINT_BALANCE_OF,
         balance_args,
     );
-    let new_uref = new_uref(result);
+    let new_uref = new_uref(balance);
     put_key(ARG_BALANCE_COWL, new_uref.into());
 }

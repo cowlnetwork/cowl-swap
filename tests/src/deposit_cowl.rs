@@ -1,11 +1,8 @@
-use casper_engine_test_support::DEFAULT_ACCOUNT_ADDR;
 use casper_types::U256;
 use cowl_swap::constants::ARG_BALANCE_COWL;
 use vesting_tests::constants::ACCOUNT_LIQUIDITY;
 
-use crate::utility::installer_request_builders::{
-    cowl_swap_balance_cowl, cowl_swap_deposit_cowl, setup, TestContext,
-};
+use crate::utility::installer_request_builders::{cowl_swap_deposit_cowl, setup, TestContext};
 
 #[test]
 fn should_deposit_cowl() {
@@ -31,14 +28,6 @@ fn should_deposit_cowl() {
     );
 
     deposit_cowl.expect_success().commit();
-
-    let balance_cowl = cowl_swap_balance_cowl(
-        &mut builder,
-        &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package,
-    );
-
-    balance_cowl.expect_success().commit();
 
     let swap_contract = builder
         .get_contract(cowl_swap_contract_hash)

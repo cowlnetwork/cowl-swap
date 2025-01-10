@@ -1,8 +1,6 @@
 use crate::utility::{
     constants::MINIMUM_TRANSFER_AMOUNT,
-    installer_request_builders::{
-        cowl_swap_balance_cspr, cowl_swap_deposit_cspr, setup, TestContext,
-    },
+    installer_request_builders::{cowl_swap_deposit_cspr, setup, TestContext},
 };
 use casper_engine_test_support::DEFAULT_ACCOUNT_ADDR;
 use casper_types::U512;
@@ -58,14 +56,6 @@ fn should_deposit_cspr_when_installer() {
     );
 
     deposit_cspr.expect_success().commit();
-
-    let balance_cspr = cowl_swap_balance_cspr(
-        &mut builder,
-        &DEFAULT_ACCOUNT_ADDR,
-        &cowl_swap_contract_package,
-    );
-
-    balance_cspr.expect_success().commit();
 
     let swap_contract = builder
         .get_contract(cowl_swap_contract_hash)

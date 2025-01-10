@@ -28,7 +28,7 @@ pub extern "C" fn call() {
     let cowl_swap_contract_package_key_hash = ContractPackageHash::from(
         cowl_swap_contract_package_key
             .into_hash()
-            .unwrap_or_revert_with(SwapError::MissingTokenContractPackage),
+            .unwrap_or_revert_with(SwapError::InvalidPackageHash),
     );
 
     let local_purse = create_purse();
@@ -36,7 +36,7 @@ pub extern "C" fn call() {
 
     transfer_from_purse_to_purse(source_purse, local_purse, amount, None).unwrap_or_revert();
 
-    call_versioned_contract(
+    call_versioned_contract::<()>(
         cowl_swap_contract_package_key_hash,
         None,
         ENTRY_POINT_CSPR_TO_COWL,
@@ -44,5 +44,5 @@ pub extern "C" fn call() {
             ARG_AMOUNT => amount,
             ARG_PURSE => local_purse
         },
-    )
+    );
 }

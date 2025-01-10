@@ -340,6 +340,25 @@ pub fn get_cowl_cep18_contract_package() -> ContractPackageHash {
 }
 
 #[cfg(feature = "contract-support")]
+pub fn get_cowl_swap_contract_package() -> ContractPackageHash {
+    use casper_contract::unwrap_or_revert::UnwrapOrRevert;
+
+    use crate::constants::ARG_PACKAGE_HASH;
+
+    let cowl_swap_contract_package_key = get_key_with_user_errors(
+        ARG_PACKAGE_HASH,
+        SwapError::MissingPackageHash,
+        SwapError::InvalidPackageHash,
+    );
+
+    ContractPackageHash::from(
+        cowl_swap_contract_package_key
+            .into_hash()
+            .unwrap_or_revert_with(SwapError::InvalidPackageHash),
+    )
+}
+
+#[cfg(feature = "contract-support")]
 pub fn get_cowl_cep18_balance_for_key(owner: &Key) -> U256 {
     use casper_contract::contract_api::runtime::call_versioned_contract;
     use casper_types::{runtime_args, RuntimeArgs};

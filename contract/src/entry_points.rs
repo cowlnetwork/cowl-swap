@@ -65,7 +65,7 @@ pub fn withdraw_cspr() -> EntryPoint {
     EntryPoint::new(
         ENTRY_POINT_WITHDRAW_CSPR,
         vec![Parameter::new(ARG_AMOUNT, CLType::U512)],
-        CLType::Unit,
+        CLType::U512,
         EntryPointAccess::Public,
         EntryPointType::Contract,
     )
@@ -75,7 +75,7 @@ pub fn withdraw_cowl() -> EntryPoint {
     EntryPoint::new(
         ENTRY_POINT_WITHDRAW_COWL,
         vec![Parameter::new(ARG_AMOUNT, CLType::U512)],
-        CLType::Unit,
+        CLType::U512,
         EntryPointAccess::Public,
         EntryPointType::Contract,
     )
@@ -85,7 +85,7 @@ pub fn deposit_cspr() -> EntryPoint {
     EntryPoint::new(
         ENTRY_POINT_DEPOSIT_CSPR,
         vec![Parameter::new(ARG_AMOUNT, CLType::U512)],
-        CLType::Unit,
+        CLType::U512,
         EntryPointAccess::Public,
         EntryPointType::Contract,
     )
